@@ -42,9 +42,10 @@ public class CategoryPresenter {
 
                             if (zooData.getResult().getResults() != null && !zooData.getResult().getResults().isEmpty()) {
                                 tmpList.add(0);
-                                for (ZooData.Result.Results result : zooData.getResult().getResults()) {
-                                    tmpList.add(result);
-                                }
+                                tmpList.addAll(zooData.getResult().getResults());
+//                                for (ZooData.Result.Results result : zooData.getResult().getResults()) {
+//                                    tmpList.add(result);
+//                                }
                             } else {
                                 tmpList.add("查詢不到資料,請再刷新一次");
                             }

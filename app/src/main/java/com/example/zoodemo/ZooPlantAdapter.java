@@ -21,6 +21,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import android.os.Handler;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,6 +73,8 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
+    Bitmap bitmap = null;
+
     @SuppressLint("CheckResult")
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
@@ -94,6 +97,28 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .apply(options)
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                         .into(((ContentViewHolder) holder).ivPhoto);
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            bitmap = Glide.with(mContext)
+//                                    .asBitmap()
+//                                    .load(paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))))
+//                                    //                    .load((((ZooData.Result.Results) dataList.get(position)).getF_Pic01_URL()))
+//                                    .apply(options)
+//                                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+//                                    .into(140, 140)
+//                                    .get();
+//                        } catch (ExecutionException e) {
+//                            e.printStackTrace();
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }).start();
+//
+//                ((ContentViewHolder) holder).ivPhoto.setImageBitmap(bitmap);
+
             }
         } else if (holder.getItemViewType() == ITEM_VIEW_TYPE_WARM) {
             ((WarnViewHolder) holder).tvWarn.setText((String) dataList.get(position));

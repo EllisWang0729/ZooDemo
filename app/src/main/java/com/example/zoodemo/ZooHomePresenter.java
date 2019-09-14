@@ -40,9 +40,10 @@ public class ZooHomePresenter {
                             Log.d("sssss", new Gson().toJson(zooData));
                             List<Object> tmpList = new ArrayList();
                             if (zooData.getResult().getResults() != null && !zooData.getResult().getResults().isEmpty()) {
-                                for (ZooData.Result.Results result : zooData.getResult().getResults()) {
-                                    tmpList.add(result);
-                                }
+                                tmpList.addAll(zooData.getResult().getResults());
+//                                for (ZooData.Result.Results result : zooData.getResult().getResults()) {
+//                                    tmpList.add(result);
+//                                }
                             } else {
                                 tmpList.add("查詢不到資料,請再刷新一次");
                             }
