@@ -146,6 +146,16 @@ public class CategoryFragment extends Fragment implements CategoryView, ZooPlant
         } else {
             tvWebView.setVisibility(View.INVISIBLE);
         }
+        rvPlantList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    Glide.with(getContext()).resumeRequests();
+                }else {
+                    Glide.with(getContext()).pauseRequests();
+                }
+            }
+        });
         return view;
     }
 
@@ -163,7 +173,6 @@ public class CategoryFragment extends Fragment implements CategoryView, ZooPlant
 
     @Override
     public void onItemClick(View view, int position, ZooData.Result.Results item) {
-        Log.d("onItemClick", new Gson().toJson(item));
 
         ZooPlantFragment fragment = ZooPlantFragment.newInstance(item);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();

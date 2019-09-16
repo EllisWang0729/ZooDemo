@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public class ZooHomeFragment extends Fragment implements ZooHomeView, SwipeRefre
         ButterKnife.bind(this, view);
         ivIconFunc.setImageResource(R.mipmap.baseline_menu_white_24);
         zooHomePresenter = new ZooHomePresenter(this, getContext());
-
+        Fresco.initialize(getContext());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(VERTICAL);
         rvMenuList.setLayoutManager(linearLayoutManager);

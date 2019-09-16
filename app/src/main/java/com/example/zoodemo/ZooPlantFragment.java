@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.facebook.drawee.backends.pipeline.Fresco;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -101,7 +102,7 @@ public class ZooPlantFragment extends Fragment implements ZooPlantView {
         ButterKnife.bind(this, view);
         ivIconFunc.setImageResource(R.mipmap.baseline_keyboard_arrow_left_white_24);
         zooPlantPresenter = new ZooPlantPresenter(this, getContext());
-
+        Fresco.initialize(getContext());
         if (resultData != null) {
             ivToolbarTitle.setText(resultData.getF_Name_Ch());
             RequestOptions options = new RequestOptions();

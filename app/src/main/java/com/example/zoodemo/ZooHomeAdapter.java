@@ -2,6 +2,7 @@ package com.example.zoodemo;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
@@ -86,6 +88,8 @@ public class ZooHomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     .apply(options)
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                     .into(((ContentViewHolder) holder).ivPhoto);
+//            Uri uri = Uri.parse(((ZooData.Result.Results) dataList.get(position)).getE_Pic_URL());
+//            ((ContentViewHolder) holder).ivPhoto.setImageURI(uri);
 
             if (position > lastPosition) {
                 // Scrolled Down

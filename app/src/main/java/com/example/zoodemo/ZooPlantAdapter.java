@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +17,15 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.facebook.drawee.generic.RoundingParams;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import android.os.Handler;
 
@@ -89,8 +94,11 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ((ContentViewHolder) holder).tvInfo.setText(((ZooData.Result.Results) dataList.get(position)).getF_AlsoKnown() == null ?
                     "" : ((ZooData.Result.Results) dataList.get(position)).getF_AlsoKnown());
             RequestOptions options = new RequestOptions();
+            options.centerInside();
+            options.dontTransform();
             options.placeholder(R.mipmap.ic_launcher_round);
             options.error(R.mipmap.ic_launcher_round);
+            options.fallback(R.mipmap.ic_launcher_round);
 
             if (paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))) != null &&
                     isHttpUrl(paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))))) {
@@ -103,10 +111,10 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
 //                        .into(((ContentViewHolder) holder).ivPhoto);
 
+
                 Glide.with(((ContentViewHolder) holder).itemView.getContext())
                         .load(paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))))
-                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                        .override(140,140)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
 //                    .load((((ZooData.Result.Results) dataList.get(position)).getF_Pic01_URL()))
                         .apply(options)
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
@@ -116,6 +124,10 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 ((ContentViewHolder) holder).ivPhoto.setImageDrawable(resource);
                             }
                         });
+//                Uri uri = Uri.parse(paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))));
+//                if(uri!=null) {
+//                    ((ContentViewHolder) holder).ivPhoto.setImageURI(uri);
+//                }
 
 //                new Thread(new Runnable() {
 //                    @Override
