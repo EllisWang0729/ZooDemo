@@ -3,6 +3,7 @@ package com.example.zoodemo;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,13 +95,27 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if (paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))) != null &&
                     isHttpUrl(paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))))) {
 
+//                Glide.with(((ContentViewHolder) holder).itemView.getContext())
+//                        .load(paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))))
+//                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+////                    .load((((ZooData.Result.Results) dataList.get(position)).getF_Pic01_URL()))
+//                        .apply(options)
+//                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+//                        .into(((ContentViewHolder) holder).ivPhoto);
+
                 Glide.with(((ContentViewHolder) holder).itemView.getContext())
                         .load(paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))))
                         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .override(140,140)
 //                    .load((((ZooData.Result.Results) dataList.get(position)).getF_Pic01_URL()))
                         .apply(options)
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                        .into(((ContentViewHolder) holder).ivPhoto);
+                        .into(new SimpleTarget<Drawable>() {
+                            @Override
+                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                ((ContentViewHolder) holder).ivPhoto.setImageDrawable(resource);
+                            }
+                        });
 
 //                new Thread(new Runnable() {
 //                    @Override
