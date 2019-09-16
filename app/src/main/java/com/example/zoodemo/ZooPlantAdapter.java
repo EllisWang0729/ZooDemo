@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -17,6 +18,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 
 import android.os.Handler;
 
@@ -87,16 +90,18 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             RequestOptions options = new RequestOptions();
             options.placeholder(R.mipmap.ic_launcher_round);
             options.error(R.mipmap.ic_launcher_round);
+
             if (paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))) != null &&
                     isHttpUrl(paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))))) {
 
-                Glide.with(mContext)
+                Glide.with(((ContentViewHolder) holder).itemView.getContext())
                         .load(paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))))
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
 //                    .load((((ZooData.Result.Results) dataList.get(position)).getF_Pic01_URL()))
                         .apply(options)
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                         .into(((ContentViewHolder) holder).ivPhoto);
+
 //                new Thread(new Runnable() {
 //                    @Override
 //                    public void run() {
