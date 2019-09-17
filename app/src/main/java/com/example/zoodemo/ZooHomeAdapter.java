@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -85,6 +86,7 @@ public class ZooHomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             options.error(R.mipmap.ic_launcher_round);
             Glide.with(mContext)
                     .load(((ZooData.Result.Results) dataList.get(position)).getE_Pic_URL())
+                    .transition(new DrawableTransitionOptions().crossFade())
                     .apply(options)
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                     .into(((ContentViewHolder) holder).ivPhoto);

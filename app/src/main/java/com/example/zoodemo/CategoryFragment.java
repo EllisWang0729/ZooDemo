@@ -146,16 +146,16 @@ public class CategoryFragment extends Fragment implements CategoryView, ZooPlant
         } else {
             tvWebView.setVisibility(View.INVISIBLE);
         }
-        rvPlantList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    Glide.with(getContext()).resumeRequests();
-                }else {
-                    Glide.with(getContext()).pauseRequests();
-                }
-            }
-        });
+//        rvPlantList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+//                    Glide.with(getContext()).resumeRequests();
+//                }else {
+//                    Glide.with(getContext()).pauseRequests();
+//                }
+//            }
+//        });
         return view;
     }
 
@@ -185,7 +185,13 @@ public class CategoryFragment extends Fragment implements CategoryView, ZooPlant
     @Override
     public void refreshList(List<Object> list) {
         Log.d("okok", new Gson().toJson(list));
-        zooplantAdapter.updateZooAdapter(list);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                zooplantAdapter.updateZooAdapter(list);
+            }
+        },900);
+
     }
 
     @Override

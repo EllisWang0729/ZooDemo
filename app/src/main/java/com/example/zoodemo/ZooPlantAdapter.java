@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -82,7 +83,21 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    Bitmap bitmap = null;
+    @Override
+    public void onViewDetachedFromWindow(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        if(holder instanceof ContentViewHolder) {
+            Glide.with(((ContentViewHolder) holder).itemView.getContext()).pauseRequests();
+        }
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        if(holder instanceof ContentViewHolder) {
+            Glide.with(((ContentViewHolder) holder).itemView.getContext()).resumeRequests();
+        }
+    }
 
     @SuppressLint("CheckResult")
     @Override
@@ -111,10 +126,11 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
 //                        .into(((ContentViewHolder) holder).ivPhoto);
 
-
                 Glide.with(((ContentViewHolder) holder).itemView.getContext())
                         .load(paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))))
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .thumbnail(0.1f)
+                        .transition(new DrawableTransitionOptions().crossFade())
 //                    .load((((ZooData.Result.Results) dataList.get(position)).getF_Pic01_URL()))
                         .apply(options)
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
