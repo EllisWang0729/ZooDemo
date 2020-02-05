@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.core.view.ViewCompat;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.zoodemo.databinding.FragmentZooHomeBinding;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.gson.Gson;
 
@@ -42,7 +44,7 @@ import static com.example.zoodemo.MainActivity.TAG_CATEGORY_FRAGMENT;
  * create an instance of this fragment.
  */
 public class ZooHomeFragment extends Fragment implements ZooHomeView, SwipeRefreshLayout.OnRefreshListener, ZooHomeAdapter.OnItemClickListener {
-
+    private FragmentZooHomeBinding fragMainBinding;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private ZooHomePresenter zooHomePresenter;
@@ -51,14 +53,14 @@ public class ZooHomeFragment extends Fragment implements ZooHomeView, SwipeRefre
     private String mParam2;
 
 
-    @BindView(R.id.rv_list)
-    RecyclerView rvMenuList;
-    @BindView(R.id.icon_func)
-    ImageView ivIconFunc;
-    @BindView(R.id.sl_layout)
-    SwipeRefreshLayout slLayout;
-    @BindView(R.id.progress)
-    ProgressBar pbProgress;
+    //    @BindView(R.id.rv_list)
+//    RecyclerView rvMenuList;
+    //    @BindView(R.id.icon_func)
+    private ImageView ivIconFunc;
+//    @BindView(R.id.sl_layout)
+//    SwipeRefreshLayout slLayout;
+//    @BindView(R.id.progress)
+//    ProgressBar pbProgress;
 
     private ZooHomeAdapter zooHomeAdapter;
 
@@ -98,22 +100,25 @@ public class ZooHomeFragment extends Fragment implements ZooHomeView, SwipeRefre
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_zoo_home, container, false);
-        ButterKnife.bind(this, view);
-        ivIconFunc.setImageResource(R.mipmap.baseline_menu_white_24);
+//        View view = inflater.inflate(R.layout.fragment_zoo_home, container, false);
+//        ButterKnife.bind(this, view);
+        fragMainBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_zoo_home, container, false);
         zooHomePresenter = new ZooHomePresenter(this, getContext());
-        Fresco.initialize(getContext());
+        ivIconFunc = fragMainBinding.toolbar.findViewById(R.id.icon_func);
+        ivIconFunc.setImageResource(R.mipmap.baseline_menu_white_24);
+
+//        Fresco.initialize(getContext());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(VERTICAL);
-        rvMenuList.setLayoutManager(linearLayoutManager);
-        rvMenuList.setHasFixedSize(true);
+        fragMainBinding.rvList.setLayoutManager(linearLayoutManager);
+        fragMainBinding.rvList.setHasFixedSize(true);
 
         zooHomeAdapter = new ZooHomeAdapter(getContext(), new ArrayList<>());
         zooHomeAdapter.setOnItemClickListener(this);
-        rvMenuList.setAdapter(zooHomeAdapter);
+        fragMainBinding.rvList.setAdapter(zooHomeAdapter);
         zooHomePresenter.callAPI();
-        slLayout.setOnRefreshListener(this);
-        return view;
+        fragMainBinding.slLayout.setOnRefreshListener(this);
+        return fragMainBinding.getRoot();
     }
 
 
@@ -129,20 +134,23 @@ public class ZooHomeFragment extends Fragment implements ZooHomeView, SwipeRefre
 
     @Override
     public void refreshList(List<Object> list) {
-        if (slLayout.isRefreshing()) {
-            slLayout.setRefreshing(false);
+        if (fragMainBinding.slLayout.isRefreshing()) {
+            fragMainBinding.slLayout.setRefreshing(false);
         }
+        Log.d(this.getClass().getName(), new Gson().toJson(list));
         zooHomeAdapter.updateZooAdapter(list);
     }
 
     @Override
     public void showProgressDialog() {
-        pbProgress.setVisibility(View.VISIBLE);
+        fragMainBinding.setProgressFlag(true);
+//        pbProgress.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void disMissProgressDialog() {
-        pbProgress.setVisibility(View.GONE);
+        fragMainBinding.setProgressFlag(false);
+//        pbProgress.setVisibility(View.GONE);
     }
 
     @Override
@@ -155,7 +163,7 @@ public class ZooHomeFragment extends Fragment implements ZooHomeView, SwipeRefre
         Log.d("onItemClick", new Gson().toJson(item));
         CategoryFragment fragment = CategoryFragment.newInstance(item);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,R.anim.slide_in_left,R.anim.slide_out_right);
+        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right);
         transaction.replace(getId(), fragment, TAG_CATEGORY_FRAGMENT);
         transaction.addToBackStack(null);
         transaction.commit();

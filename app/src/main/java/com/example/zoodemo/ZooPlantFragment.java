@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.zoodemo.databinding.FragmentZooPlantBinding;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
 import butterknife.BindView;
@@ -35,7 +37,7 @@ public class ZooPlantFragment extends Fragment implements ZooPlantView {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private FragmentZooPlantBinding fragmentZooPlantBinding;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -44,24 +46,24 @@ public class ZooPlantFragment extends Fragment implements ZooPlantView {
     private ZooData.Result.Results resultData;
     private ZooPlantPresenter zooPlantPresenter;
 
-    @BindView(R.id.icon_func)
+    //    @BindView(R.id.icon_func)
     ImageView ivIconFunc;
-    @BindView(R.id.iv_photo)
-    ImageView ivPhoto;
-    @BindView(R.id.toolbar_title)
+    //    @BindView(R.id.iv_photo)
+//    ImageView ivPhoto;
+//    @BindView(R.id.toolbar_title)
     TextView ivToolbarTitle;
-    @BindView(R.id.tv_tittle)
-    TextView tvTittle;
-    @BindView(R.id.tv_category)
-    TextView tvCategory;
-    @BindView(R.id.tv_introduction)
-    TextView tvIntroduction;
-    @BindView(R.id.tv_identify)
-    TextView tvIdentify;
-    @BindView(R.id.tv_features)
-    TextView tvFeatures;
-    @BindView(R.id.tv_last_update)
-    TextView tvLastUpdate;
+//    @BindView(R.id.tv_tittle)
+//    TextView tvTittle;
+//    @BindView(R.id.tv_category)
+//    TextView tvCategory;
+//    @BindView(R.id.tv_introduction)
+//    TextView tvIntroduction;
+//    @BindView(R.id.tv_identify)
+//    TextView tvIdentify;
+//    @BindView(R.id.tv_features)
+//    TextView tvFeatures;
+//    @BindView(R.id.tv_last_update)
+//    TextView tvLastUpdate;
 
     public ZooPlantFragment() {
         // Required empty public constructor
@@ -98,11 +100,20 @@ public class ZooPlantFragment extends Fragment implements ZooPlantView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_zoo_plant, container, false);
-        ButterKnife.bind(this, view);
+//        View view = inflater.inflate(R.layout.fragment_zoo_plant, container, false);
+//        ButterKnife.bind(this, view);
+        fragmentZooPlantBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_zoo_plant, container, false);
+        ivIconFunc = fragmentZooPlantBinding.toolbar.findViewById(R.id.icon_func);
+        ivToolbarTitle = fragmentZooPlantBinding.toolbar.findViewById(R.id.toolbar_title);
         ivIconFunc.setImageResource(R.mipmap.baseline_keyboard_arrow_left_white_24);
+        ivIconFunc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().popBackStack();
+            }
+        });
         zooPlantPresenter = new ZooPlantPresenter(this, getContext());
-        Fresco.initialize(getContext());
+//        Fresco.initialize(getContext());
         if (resultData != null) {
             ivToolbarTitle.setText(resultData.getF_Name_Ch());
             RequestOptions options = new RequestOptions();
@@ -111,16 +122,16 @@ public class ZooPlantFragment extends Fragment implements ZooPlantView {
             Glide.with(getContext())
                     .load(paserPhotoUrl(resultData))
                     .apply(options)
-                    .into(ivPhoto);
-            tvTittle.setText(String.format("%s%n%s", resultData.getF_Name_Ch(), resultData.getF_Name_En()));
-            tvCategory.setText(String.format("%s%n%s", "別名", resultData.getF_AlsoKnown()));
-            tvIntroduction.setText(String.format("%s%n%s", "簡介", resultData.getF_Brief()));
-            tvIdentify.setText(String.format("%s%n%s", "辨認方式", resultData.getF_Feature()));
-            tvFeatures.setText(String.format("%s%n%s", "功能性", resultData.getF_Function()));
-            tvLastUpdate.setText(String.format("%s %s", "最後更新", resultData.getF_Update() == null ? "" : resultData.getF_Update()));
+                    .into(fragmentZooPlantBinding.ivPhoto);
+            fragmentZooPlantBinding.tvTittle.setText(String.format("%s%n%s", resultData.getF_Name_Ch(), resultData.getF_Name_En()));
+            fragmentZooPlantBinding.tvCategory.setText(String.format("%s%n%s", "別名", resultData.getF_AlsoKnown()));
+            fragmentZooPlantBinding.tvIntroduction.setText(String.format("%s%n%s", "簡介", resultData.getF_Brief()));
+            fragmentZooPlantBinding.tvIdentify.setText(String.format("%s%n%s", "辨認方式", resultData.getF_Feature()));
+            fragmentZooPlantBinding.tvFeatures.setText(String.format("%s%n%s", "功能性", resultData.getF_Function()));
+            fragmentZooPlantBinding.tvLastUpdate.setText(String.format("%s %s", "最後更新", resultData.getF_Update() == null ? "" : resultData.getF_Update()));
         }
 
-        return view;
+        return fragmentZooPlantBinding.getRoot();
     }
 
     private String paserPhotoUrl(ZooData.Result.Results results) {
@@ -133,13 +144,13 @@ public class ZooPlantFragment extends Fragment implements ZooPlantView {
         }
     }
 
-    @OnClick({R.id.icon_func})
-    void onClickListener(View view) {
-        switch (view.getId()) {
-            case R.id.icon_func:
-                getFragmentManager().popBackStack();
-                break;
-        }
-    }
+//    @OnClick({R.id.icon_func})
+//    void onClickListener(View view) {
+//        switch (view.getId()) {
+//            case R.id.icon_func:
+//                getFragmentManager().popBackStack();
+//                break;
+//        }
+//    }
 
 }

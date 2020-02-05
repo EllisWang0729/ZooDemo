@@ -13,12 +13,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.zoodemo.databinding.ItemWarnBinding;
+import com.example.zoodemo.databinding.ItemZooBinding;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
@@ -30,6 +33,8 @@ public class ZooHomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public static final int ITEM_VIEW_TYPE_WARM = 0;
     public static final int ITEM_VIEW_TYPE_CONTENT = 1;
     public static final int ITEM_VIEW_TYPE_TITTLE = 2;
+    private ItemZooBinding itemContentBinding;
+    private ItemWarnBinding itemWarnBinding;
     private Context mContext;
     private List<Object> dataList;
     private OnItemClickListener onItemClickListener;
@@ -61,14 +66,17 @@ public class ZooHomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == ITEM_VIEW_TYPE_WARM) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_warn, parent, false);
-            return new WarnViewHolder(view);
-        } else  if (viewType == ITEM_VIEW_TYPE_CONTENT){
-            View view = LayoutInflater.from(mContext).inflate(R.layout.item_zoo, parent, false);
-            view.setOnClickListener(this);
-            return new ContentViewHolder(view);
-        }else {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.item_tittle, parent, false);
-            return new TittleViewHolder(view);
+            itemWarnBinding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.item_warn, parent, false);
+            return new TittleViewHolder(itemWarnBinding);
+        } else if (viewType == ITEM_VIEW_TYPE_CONTENT) {
+//            View view = LayoutInflater.from(mContext).inflate(R.layout.item_zoo, parent, false);
+//            view.setOnClickListener(this);
+            itemContentBinding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.item_zoo, parent, false);
+            itemContentBinding.getRoot().setOnClickListener(this);
+            return new ContentViewHolder(itemContentBinding);
+        } else {
+            itemWarnBinding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.item_warn, parent, false);
+            return new TittleViewHolder(itemWarnBinding);
         }
     }
 
@@ -77,36 +85,49 @@ public class ZooHomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType() == ITEM_VIEW_TYPE_CONTENT) {
             holder.itemView.setTag(position);
-            ((ContentViewHolder) holder).tvTittle.setText(((ZooData.Result.Results) dataList.get(position)).getE_Name() == null ?
+//            itemContentBinding.setResults(((ZooData.Result.Results) dataList.get(position)));
+//            ((ContentViewHolder) holder).tvTittle.setText(((ZooData.Result.Results) dataList.get(position)).getE_Name() == null ?
+//                    "" : ((ZooData.Result.Results) dataList.get(position)).getE_Name());
+//            ((ContentViewHolder) holder).tvInfo.setText(((ZooData.Result.Results) dataList.get(position)).getE_Info() == null ?
+//                    "" : ((ZooData.Result.Results) dataList.get(position)).getE_Info());
+            itemContentBinding.tvTittle.setText(((ZooData.Result.Results) dataList.get(position)).getE_Name() == null ?
                     "" : ((ZooData.Result.Results) dataList.get(position)).getE_Name());
-            ((ContentViewHolder) holder).tvInfo.setText(((ZooData.Result.Results) dataList.get(position)).getE_Info() == null ?
+            itemContentBinding.tvInfo.setText(((ZooData.Result.Results) dataList.get(position)).getE_Info() == null ?
                     "" : ((ZooData.Result.Results) dataList.get(position)).getE_Info());
             RequestOptions options = new RequestOptions();
             options.placeholder(R.mipmap.ic_launcher_round);
             options.error(R.mipmap.ic_launcher_round);
+//            Glide.with(mContext)
+//                    .load(((ZooData.Result.Results) dataList.get(position)).getE_Pic_URL())
+//                    .transition(new DrawableTransitionOptions().crossFade())
+//                    .apply(options)
+//                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+//                    .into(((ContentViewHolder) holder).ivPhoto);
             Glide.with(mContext)
                     .load(((ZooData.Result.Results) dataList.get(position)).getE_Pic_URL())
                     .transition(new DrawableTransitionOptions().crossFade())
                     .apply(options)
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                    .into(((ContentViewHolder) holder).ivPhoto);
+                    .into(itemContentBinding.ivPhoto);
 //            Uri uri = Uri.parse(((ZooData.Result.Results) dataList.get(position)).getE_Pic_URL());
 //            ((ContentViewHolder) holder).ivPhoto.setImageURI(uri);
 
             if (position > lastPosition) {
                 // Scrolled Down
-                setAnimationDown( ((ContentViewHolder) holder).itemView, position);
+                setAnimationDown(((ContentViewHolder) holder).itemView, position);
 //                viewHolder.itemView.animate().setStartDelay(800).start();
             } else {
                 // Scrolled Up
-                setAnimationUp( ((ContentViewHolder) holder).itemView, position);
+                setAnimationUp(((ContentViewHolder) holder).itemView, position);
 //                viewHolder.itemView.animate().setStartDelay(800).start();
             }
             lastPosition = position;
         } else if (holder.getItemViewType() == ITEM_VIEW_TYPE_WARM) {
-            ((WarnViewHolder) holder).tvWarn.setText((String) dataList.get(position));
+//            ((WarnViewHolder) holder).tvWarn.setText((String) dataList.get(position));
+            itemWarnBinding.tvWarn.setText((String) dataList.get(position));
         }
     }
+
     private void setAnimationDown(View viewToAnimate, int position) {
         // If the bound view wasn't previously displayed on screen, it's animated
 //        if (position > lastPosition) {
@@ -174,26 +195,36 @@ public class ZooHomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     class ContentViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.tv_tittle)
-        TextView tvTittle;
-        @BindView(R.id.tv_info)
-        TextView tvInfo;
-        @BindView(R.id.iv_photo)
-        ImageView ivPhoto;
+//        @BindView(R.id.tv_tittle)
+//        TextView tvTittle;
+//        @BindView(R.id.tv_info)
+//        TextView tvInfo;
+//        @BindView(R.id.iv_photo)
+//        ImageView ivPhoto;
+//
+//        public ContentViewHolder(View itemView) {
+//            super(itemView);
+//            ButterKnife.bind(this, itemView);
+//        }
 
-        public ContentViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        private ContentViewHolder(ItemZooBinding itemBinding) {
+            super(itemBinding.getRoot());
+
         }
     }
 
     class TittleViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.tv_tittle)
-        TextView tvTittle;
+//        @BindView(R.id.tv_tittle)
+//        TextView tvTittle;
+//
+//        public TittleViewHolder(View itemView) {
+//            super(itemView);
+//            ButterKnife.bind(this, itemView);
+//        }
 
-        public TittleViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        private TittleViewHolder(ItemWarnBinding itemBinding) {
+            super(itemBinding.getRoot());
+
         }
     }
 }

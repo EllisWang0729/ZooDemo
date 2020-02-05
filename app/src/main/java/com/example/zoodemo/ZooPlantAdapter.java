@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -25,6 +26,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.zoodemo.databinding.ItemTittleBinding;
+import com.example.zoodemo.databinding.ItemWarnBinding;
+import com.example.zoodemo.databinding.ItemZooBinding;
 import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -45,6 +49,9 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private Context mContext;
     private List<Object> dataList;
     private OnItemClickListener onItemClickListener;
+    private ItemWarnBinding itemWarnBinding;
+    private ItemZooBinding itemContentBinding;
+    private ItemTittleBinding itemTittleBinding;
 
     ZooPlantAdapter(Context context, List<Object> list) {
         this.mContext = context;
@@ -71,22 +78,26 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == ITEM_VIEW_TYPE_WARM) {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.item_warn, parent, false);
-            return new WarnViewHolder(view);
+//            View view = LayoutInflater.from(mContext).inflate(R.layout.item_warn, parent, false);
+            itemWarnBinding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.item_warn, parent, false);
+            return new WarnViewHolder(itemWarnBinding);
         } else if (viewType == ITEM_VIEW_TYPE_CONTENT) {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.item_zoo, parent, false);
-            view.setOnClickListener(this);
-            return new ContentViewHolder(view);
+//            View view = LayoutInflater.from(mContext).inflate(R.layout.item_zoo, parent, false);
+            itemContentBinding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.item_zoo, parent, false);
+            itemContentBinding.getRoot().setOnClickListener(this);
+//            view.setOnClickListener(this);
+            return new ContentViewHolder(itemContentBinding);
         } else {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.item_tittle, parent, false);
-            return new TittleViewHolder(view);
+//            View view = LayoutInflater.from(mContext).inflate(R.layout.item_tittle, parent, false);
+            itemTittleBinding=DataBindingUtil.inflate(LayoutInflater.from(mContext),R.layout.item_tittle, parent, false);
+            return new TittleViewHolder(itemTittleBinding);
         }
     }
 
     @Override
     public void onViewDetachedFromWindow(@NonNull RecyclerView.ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
-        if(holder instanceof ContentViewHolder) {
+        if (holder instanceof ContentViewHolder) {
             Glide.with(((ContentViewHolder) holder).itemView.getContext()).pauseRequests();
         }
     }
@@ -94,7 +105,7 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
         super.onViewAttachedToWindow(holder);
-        if(holder instanceof ContentViewHolder) {
+        if (holder instanceof ContentViewHolder) {
             Glide.with(((ContentViewHolder) holder).itemView.getContext()).resumeRequests();
         }
     }
@@ -104,10 +115,15 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType() == ITEM_VIEW_TYPE_CONTENT) {
             holder.itemView.setTag(position);
-            ((ContentViewHolder) holder).tvTittle.setText(((ZooData.Result.Results) dataList.get(position)).getF_Name_Ch() == null ?
+            itemContentBinding.tvTittle.setText(((ZooData.Result.Results) dataList.get(position)).getF_Name_Ch() == null ?
                     "" : ((ZooData.Result.Results) dataList.get(position)).getF_Name_Ch());
-            ((ContentViewHolder) holder).tvInfo.setText(((ZooData.Result.Results) dataList.get(position)).getF_AlsoKnown() == null ?
+            itemContentBinding.tvInfo.setText(((ZooData.Result.Results) dataList.get(position)).getF_AlsoKnown() == null ?
                     "" : ((ZooData.Result.Results) dataList.get(position)).getF_AlsoKnown());
+//            ((ContentViewHolder) holder).tvTittle.setText(((ZooData.Result.Results) dataList.get(position)).getF_Name_Ch() == null ?
+//                    "" : ((ZooData.Result.Results) dataList.get(position)).getF_Name_Ch());
+//            ((ContentViewHolder) holder).tvInfo.setText(((ZooData.Result.Results) dataList.get(position)).getF_AlsoKnown() == null ?
+//                    "" : ((ZooData.Result.Results) dataList.get(position)).getF_AlsoKnown());
+
             RequestOptions options = new RequestOptions();
             options.centerInside();
             options.dontTransform();
@@ -125,21 +141,27 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //                        .apply(options)
 //                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
 //                        .into(((ContentViewHolder) holder).ivPhoto);
-
-                Glide.with(((ContentViewHolder) holder).itemView.getContext())
+                Glide.with(mContext)
                         .load(paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))))
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .thumbnail(0.1f)
                         .transition(new DrawableTransitionOptions().crossFade())
-//                    .load((((ZooData.Result.Results) dataList.get(position)).getF_Pic01_URL()))
                         .apply(options)
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                        .into(new SimpleTarget<Drawable>() {
-                            @Override
-                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                ((ContentViewHolder) holder).ivPhoto.setImageDrawable(resource);
-                            }
-                        });
+                        .into(itemContentBinding.ivPhoto);
+//            Uri uri = Uri.parse(((ZooData.Result.Result
+//                Glide.with(((ContentViewHolder) holder).itemView.getContext())
+//                        .load(paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))))
+//                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                        .thumbnail(0.1f)
+//                        .transition(new DrawableTransitionOptions().crossFade())
+////                    .load((((ZooData.Result.Results) dataList.get(position)).getF_Pic01_URL()))
+//                        .apply(options)
+//                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+//                        .into(new SimpleTarget<Drawable>() {
+//                            @Override
+//                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+//                                itemContentBinding.ivPhoto.setImageDrawable(resource);
+//                            }
+//                        });
 //                Uri uri = Uri.parse(paserPhotoUrl((((ZooData.Result.Results) dataList.get(position)))));
 //                if(uri!=null) {
 //                    ((ContentViewHolder) holder).ivPhoto.setImageURI(uri);
@@ -169,9 +191,12 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             }
         } else if (holder.getItemViewType() == ITEM_VIEW_TYPE_WARM) {
-            ((WarnViewHolder) holder).tvWarn.setText((String) dataList.get(position));
+            itemWarnBinding.tvWarn.setText((String) dataList.get(position));
+//            ((WarnViewHolder) holder).tvWarn.setText((String) dataList.get(position));
         } else if (holder.getItemViewType() == ITEM_VIEW_TYPE_TITTLE) {
-            ((TittleViewHolder) holder).tvTittle.setText("植物資料");
+//            ((TittleViewHolder) holder).tvTittle.setText("植物資料");
+            itemTittleBinding.tvTittle.setText("植物資料");
+
         }
     }
 
@@ -223,36 +248,46 @@ public class ZooPlantAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     class WarnViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.tv_warn)
-        TextView tvWarn;
+//        @BindView(R.id.tv_warn)
+//        TextView tvWarn;
+//
+//        public WarnViewHolder(View itemView) {
+//            super(itemView);
+//            ButterKnife.bind(this, itemView);
+//        }
 
-        public WarnViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        private WarnViewHolder(ItemWarnBinding warnBinding) {
+            super(warnBinding.getRoot());
         }
     }
 
     class ContentViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.tv_tittle)
-        TextView tvTittle;
-        @BindView(R.id.tv_info)
-        TextView tvInfo;
-        @BindView(R.id.iv_photo)
-        ImageView ivPhoto;
-
-        public ContentViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+        //        @BindView(R.id.tv_tittle)
+//        TextView tvTittle;
+//        @BindView(R.id.tv_info)
+//        TextView tvInfo;
+//        @BindView(R.id.iv_photo)
+//        ImageView ivPhoto;
+//
+//        public ContentViewHolder(View itemView) {
+//            super(itemView);
+//            ButterKnife.bind(this, itemView);
+//        }
+        private ContentViewHolder(ItemZooBinding zooBinding) {
+            super(zooBinding.getRoot());
         }
     }
 
     class TittleViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.tv_tittle)
-        TextView tvTittle;
-
-        public TittleViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+//        @BindView(R.id.tv_tittle)
+//        TextView tvTittle;
+//
+//        public TittleViewHolder(View itemView) {
+//            super(itemView);
+//            ButterKnife.bind(this, itemView);
+//        }
+        private TittleViewHolder(ItemTittleBinding tittleBinding){
+            super(tittleBinding.getRoot());
         }
     }
 }
